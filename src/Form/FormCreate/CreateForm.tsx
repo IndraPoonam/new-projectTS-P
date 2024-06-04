@@ -1,5 +1,5 @@
 import React, { Component, ChangeEvent } from 'react';
-import { TextField, Button, MenuItem, InputAdornment, Checkbox, FormControlLabel, Link, Typography, Container, Box, ListItemIcon } from '@mui/material';
+import { TextField, Button, MenuItem, InputAdornment, Checkbox, FormControlLabel, Link, Typography, Box, ListItemIcon } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 interface Country {
@@ -21,6 +21,7 @@ interface State {
     fullNameError: string | undefined;
     emailError: string | undefined;
     phoneNumberError: string | undefined;
+    termsAcceptedError: string | undefined;
 }
 
 class CreateForm extends Component<{}, State> {
@@ -47,7 +48,8 @@ class CreateForm extends Component<{}, State> {
             passwordError: '',
             fullNameError: '',
             emailError: '',
-            phoneNumberError: ''
+            phoneNumberError: '',
+            termsAcceptedError: ''
         };
     }
 
@@ -62,6 +64,11 @@ class CreateForm extends Component<{}, State> {
                 [name]: value,
                 phoneNumber: countryCode
             }));
+        } else if (name === 'termsAccepted') {
+            this.setState(prevState => ({
+                ...prevState,
+                termsAccepted: (e.target as HTMLInputElement).checked
+            }));
         } else {
             this.setState(prevState => ({
                 ...prevState,
@@ -73,11 +80,16 @@ class CreateForm extends Component<{}, State> {
             });
         }
     };
+
     validatePassword = (password: string) => {
         const strongRegex = new RegExp(
             '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'
         );
-        if (!strongRegex.test(password)) {
+        if (!password) {
+            this.setState({
+                passwordError: 'This field is required',
+            });
+        } else if (!strongRegex.test(password)) {
             this.setState({
                 passwordError: 'Password must contain at least 8 characters, including one uppercase letter, one lowercase letter and one number.',
             });
@@ -87,48 +99,54 @@ class CreateForm extends Component<{}, State> {
             });
         }
     };
+
     validateFields = () => {
-        const { fullName, email, phoneNumber } = this.state;
-        let fullNameError = '', emailError = '', phoneNumberError = '', termsAcceptedError = '';
+        const { fullName, email, phoneNumber, password, termsAccepted } = this.state;
+        let fullNameError = '', emailError = '', phoneNumberError = '', passwordError = '', termsAcceptedError = '';
         if (!fullName) fullNameError = 'This field is required';
         if (!email) emailError = 'This field is required';
         if (!phoneNumber) phoneNumberError = 'This field is required';
+        if (!password) passwordError = 'This field is required';
+        if (!termsAccepted) termsAcceptedError = 'You must accept the terms and conditions';
         this.setState({
             fullNameError,
             emailError,
             phoneNumberError,
+            passwordError,
+            termsAcceptedError
         });
-        return !(fullNameError || emailError || phoneNumberError || termsAcceptedError);
+        return !(fullNameError || emailError || phoneNumberError || passwordError || termsAcceptedError);
     };
+
     handleSubmit = () => {
         if (this.validateFields()) {
             console.log(this.state);
         }
     };
+
     togglePasswordVisibility = () => {
         this.setState({ showPassword: !this.state.showPassword });
     };
+
     render() {
         const selectedCountry = this.countries.find(c => c.value === this.state.country);
 
         return (
-            <Box   sx={{
+            <Box sx={{
                 width: 'full',
                 padding: '1.5rem',
                 backgroundColor: 'white',
                 boxShadow: 8,
                 borderRadius: '8px',
-              }}>
-     
-
-                <Box sx={{ mt: 5, width: '60%', height:'fit', margin: '0 auto', }}>
+            }}>
+                <Box sx={{ mt: 5, width: '60%', height: 'fit', margin: '0 auto', }}>
                     <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                         Need an Account - Sign Up
                     </Typography>
                     <Typography variant="subtitle1" gutterBottom sx={{ color: 'blue' }}>
                         Basic Information
                     </Typography>
-                    
+
                     <TextField
                         fullWidth
                         margin="normal"
@@ -161,7 +179,7 @@ class CreateForm extends Component<{}, State> {
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    {selectedCountry && <img />}
+                                    {selectedCountry && <img  />}
                                 </InputAdornment>
                             ),
                         }}
@@ -191,7 +209,6 @@ class CreateForm extends Component<{}, State> {
                         margin="normal"
                         label="Password"
                         name="password"
-                      
                         type={this.state.showPassword ? 'text' : 'password'}
                         value={this.state.password}
                         onChange={this.handleChange}
@@ -208,21 +225,21 @@ class CreateForm extends Component<{}, State> {
                         }}
                     />
                     <FormControlLabel
-                        control={ <Checkbox color="primary"/>  }
-
+                        control={<Checkbox color="primary" checked={this.state.termsAccepted} onChange={this.handleChange} name="termsAccepted" />}
                         label={<span>I agree to the <Link href="#">Terms & Conditions</Link></span>}
                     />
-                    <Button variant="contained" color="primary" sx={{ml:'7rem',width:'50%'}} onClick={this.handleSubmit}>
+                    {this.state.termsAcceptedError && <Typography color="error">{this.state.termsAcceptedError}</Typography>}
+                    <Button variant="contained" color="primary" sx={{ ml: '7rem', width: '50%' }} onClick={this.handleSubmit}>
                         Sign Up
                     </Button>
                     <Typography variant="body2" sx={{ mt: 2, fontWeight: 'bold' }}>
                         Already have an account? <Link href="#">Sign In</Link>
                     </Typography>
                 </Box>
-         
             </Box>
         );
     }
 }
 
 export default CreateForm;
+

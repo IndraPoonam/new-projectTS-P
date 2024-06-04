@@ -92,31 +92,24 @@ class CreateForm extends Component<{}, State> {
       });
     }
   };
-
   validateFields = () => {
     const { fullName, email, phoneNumber} = this.state;
     let fullNameError = '', emailError = '', phoneNumberError = '', termsAcceptedError = '';
     if (!fullName) fullNameError = 'This field is required';
     if (!email) emailError = 'This field is required';
     if (!phoneNumber) phoneNumberError = 'This field is required';
-   
-
     this.setState({
       fullNameError,
       emailError,
       phoneNumberError,
-
     });
-
     return !(fullNameError || emailError || phoneNumberError || termsAcceptedError);
   };
-
   handleSubmit = () => {
     if (this.validateFields()) {
       console.log(this.state);
     }
   };
-
   togglePasswordVisibility = () => {
     this.setState({ showPassword: !this.state.showPassword });
   };
@@ -220,9 +213,7 @@ class CreateForm extends Component<{}, State> {
               />
             }
             label={<span>I agree to the <Link href="#">Terms & Conditions</Link></span>}
-          
           />
-        
           <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={this.handleSubmit}>
             Sign Up
           </Button>
@@ -231,6 +222,8 @@ class CreateForm extends Component<{}, State> {
           </Typography>
         </Box>
       </Container>
+
+
     );
   }
 }

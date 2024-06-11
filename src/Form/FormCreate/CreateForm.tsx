@@ -271,6 +271,18 @@ class CreateForm extends Component<{}, State> {
                             onChange={this.handleChange}
                             error={Boolean(this.state.phoneNumberError)}
                             helperText={this.state.phoneNumberError}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //       <InputAdornment position="start">
+                            //         {formValues.country && (
+                            //           <Typography variant="body1" sx={{ color: 'black', marginRight: '10px' }}>
+                            //             {countries.find(country => country.name === formValues.country)?.code || ''}
+                            //           </Typography>
+                            //         )}
+                            //       </InputAdornment>
+                            //     ),
+                            //   }}
+
                         />
                         <FormControl margin="dense" sx={{ marginTop: '10px', width: '100%' }} variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
